@@ -247,6 +247,44 @@ namespace Win32API.Window
         public static extern Int32 SendMessage(Int32 hWnd, Int32 Msg, Int32 wParam, Int32 lParam);
 
         /// <summary>
+        /// マウスカーソル（ マウスポインタ）の現在の位置に相当するスクリーン座標を取得します。
+        /// </summary>
+        /// <param name="lpPoint">カーソルの位置</param>
+        /// <returns>関数が成功すると、0 以外の値が返ります。</returns>
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out POINTFX lpPoint);
+
+        /// <summary>
+        /// 指定された座標を含むウィンドウのハンドルを取得します。
+        /// </summary>
+        /// <param name="p">座標</param>
+        /// <returns>関数が成功すると、指定した座標を含むウィンドウのハンドルが返ります。
+        /// 指定した座標にウィンドウがないときは、NULL が返ります。</returns>
+        [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(System.Drawing.Point p);
+
+
+
+
+        /// <summary>
+        /// GetCursorPosではSystem.Drawing.Pointが使えないため
+        /// </summary>
+        public struct POINTFX
+        {
+            public FIXED x;
+            public FIXED y;
+        }
+
+        /// <summary>
+        /// POINTFXで使用
+        /// </summary>
+        public struct FIXED
+        {
+            public short fract;
+            public short value;
+        }
+
+        /// <summary>
         /// COPYDATASTRUCT構造体 
         /// </summary>
         public struct COPYDATASTRUCT
@@ -332,6 +370,7 @@ namespace Win32API.Window
         /// </summary>
         /// <param name="stRegex">正規表現</param>
         /// <param name="hWnd">親ウィンドウのハンドル。0なら全てから探す</param>
+        /// <param name="options">正規表現のオプション</param>
         /// <returns></returns>
         public static IEnumerable<IntPtr> FindWindowHandlesByClassName(string stRegex, IntPtr hWnd, RegexOptions options = RegexOptions.None)
         {
@@ -371,7 +410,13 @@ namespace Win32API.Window
             }
         }
 
-
+        /// <summary>
+        /// ウィンドウテキストの正規表現で検索して結果を列挙する
+        /// </summary>
+        /// <param name="stRegex">正規表現</param>
+        /// <param name="hWnd">親ウィンドウのハンドル。0なら全てから探す</param>
+        /// <param name="options">正規表現のオプション</param>
+        /// <returns></returns>
         public static IEnumerable<IntPtr> FindWindowHandlesByText(string stRegex, IntPtr hWnd, RegexOptions options = RegexOptions.None)
         {
             Window window;
@@ -409,6 +454,22 @@ namespace Win32API.Window
                 }
             }
         }
+
+        /// <summary>
+        /// マウスカーソルの座標を返します。
+        /// </summary>
+        /// <param name="x">[out]マウスカーソルのX座標</param>
+        /// <param name="y">[out]マウスカーソルのY座標</param>
+        /// <returns>GetCursorPosの戻り値</returns>
+        public static bool GetCursorPosition(out int x, out int y)
+        {
+            POINTFX point = new POINTFX();
+            bool blRtn = GetCursorPos(out point);
+            x = point.x.fract;
+            y = point.y.fract;
+            return blRtn;
+        }
+
 
     }
 
