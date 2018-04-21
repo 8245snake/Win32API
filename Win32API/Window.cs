@@ -473,7 +473,6 @@ namespace Win32API.Window
 
     }
 
-
     public class Window
     {
         private IntPtr ChWnd;

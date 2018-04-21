@@ -467,8 +467,7 @@ namespace Win32API.Graphic
         }
     }
 
-
-    public class Custom
+    public class Custom 
     {
 
         //対象のボタンが押されているとGetAsyncKeyStateの返り値の最上位ビットが1になる

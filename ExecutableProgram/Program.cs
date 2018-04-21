@@ -4,10 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Win32API.Window;
-using static Win32API.Window.Custom;
-using static Win32API.Window.Native;
 using System.Text.RegularExpressions;
+using Win32API.Window;
+using static Win32API.Window.Native;
+using static Win32API.Window.Custom;
 
 namespace ExecutableProgram
 {
