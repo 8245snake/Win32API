@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 using static Win32API.Window.Native;
 using static Win32API.Window.Custom;
 
+/// <summary>
+/// 画面操作を扱う
+/// </summary>
 namespace Win32API.Window
 {
     public class Native

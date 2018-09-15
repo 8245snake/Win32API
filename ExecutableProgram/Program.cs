@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Win32API.Window;
 using static Win32API.Window.Native;
 using static Win32API.Window.Custom;
+using static Win32API.Registry.Custom;
 
 namespace ExecutableProgram
 {
@@ -17,45 +18,21 @@ namespace ExecutableProgram
         static void Main(string[] args)
         {
 
-            //foreach (IntPtr parent in GetWindowHandles())
-            //{
-            //    Window wnd = new Window(parent);
-            //    foreach (Window child in wnd.GetChildren())
-            //    {
-            //        Console.WriteLine(child.ToString());
-            //    }
+            string iniFilePath = @"C:\Users\Shingo\Desktop\test.ini";
 
-            //    Console.WriteLine("");
-            //}
+            string[] arr = GetIniAllKey(iniFilePath, "A");
 
-            foreach (IntPtr handle in FindWindowHandlesByText(".*追加.*", IntPtr.Zero, RegexOptions.IgnoreCase ))
+            foreach (string item in arr)
             {
-                Window wnd = new Window(handle);
-                Console.WriteLine(wnd.ToString());
+                Console.WriteLine(item);
             }
 
+            Console.WriteLine(ReadIni(iniFilePath,"A","a1"));
+            Console.WriteLine(ReadIni(iniFilePath, "A", "a2"));
+            Console.WriteLine(ReadIni(iniFilePath, "B", "b1"));
+            Console.WriteLine(ReadIni(iniFilePath, "B", "b2"));
 
             Console.ReadKey();
-
-
-            //int x = 0;
-            //int y = 0;
-            //bool blRtn = false;
-            //while (true) {
-            //    blRtn = GetCursorPosition(out x, out y);
-            //    Console.WriteLine(string.Format("x = {0}, y = {1} Rtn = {2}", x, y, blRtn));
-            //}
-
-            IntPtr hWnd = IntPtr.Zero;
-            System.Drawing.Point sp;
-            Window window = new Window(hWnd);
-            while (true)
-            {
-                sp = System.Windows.Forms.Cursor.Position;
-                hWnd = WindowFromPoint(sp);
-                window = new Window(hWnd);
-                Console.WriteLine(window.ToString());
-            }
 
         }
     }
