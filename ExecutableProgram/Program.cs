@@ -18,19 +18,20 @@ namespace ExecutableProgram
         static void Main(string[] args)
         {
 
-            string iniFilePath = @"C:\Users\Shingo\Desktop\test.ini";
-
-            string[] arr = GetIniAllKey(iniFilePath, "A");
+            string iniFilePath = @"C:\Users\Shingo\Desktop\ini\setting.ini";
+            Console.WriteLine(ReadIni(iniFilePath, "Dir", "path1"));
+            string[] arr = GetKeys(iniFilePath, "layout");
+            //arr = GetIniAllKeyValueSet(iniFilePath, "layout");
 
             foreach (string item in arr)
             {
                 Console.WriteLine(item);
             }
 
-            Console.WriteLine(ReadIni(iniFilePath,"A","a1"));
-            Console.WriteLine(ReadIni(iniFilePath, "A", "a2"));
-            Console.WriteLine(ReadIni(iniFilePath, "B", "b1"));
-            Console.WriteLine(ReadIni(iniFilePath, "B", "b2"));
+            //Console.WriteLine(ReadIni(iniFilePath,"A","a1"));
+            //Console.WriteLine(ReadIni(iniFilePath, "A", "a2"));
+            //Console.WriteLine(ReadIni(iniFilePath, "B", "b1"));
+            //Console.WriteLine(ReadIni(iniFilePath, "B", "b2"));
 
             Console.ReadKey();
 

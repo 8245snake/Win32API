@@ -34,11 +34,13 @@ namespace Win32API.Registry
         public static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
 
         [DllImport("KERNEL32.DLL")]
-        public static extern uint GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, uint nSize, string lpFileName);
+        public static extern uint GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, IntPtr lpReturnedString, uint nSize, string lpFileName);
 
         [DllImport("KERNEL32.DLL")]
         public static extern uint WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
 
+        [DllImport("kernel32.dll")]
+        public static extern int GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
     }
 
     public class Custom
@@ -49,7 +51,7 @@ namespace Win32API.Registry
         /// <param name="iniFileName">ファイルパス</param>
         /// <param name="section">セクション</param>
         /// <returns>[キー]=[値]の配列</returns>
-        public static string[] GetIniAllKey(string iniFileName, string section)
+        public static string[] GetIniAllKeyValueSet(string iniFileName, string section)
         {
             uint MAX_BUFFER = 32767;
             IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
@@ -65,13 +67,48 @@ namespace Win32API.Registry
             return local.Substring(0, local.Length - 1).Split('\0');
         }
 
-        public static string ReadIni(string iniFilePath, string appName, string key)
+        public static string ReadIni(string iniFilePath, string section, string key, string defaultValue = "")
         {
-            StringBuilder sb = new StringBuilder(1024);
+            uint MAX_BUFFER = 32767;
+            IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
+            uint bytesReturned = Native.GetPrivateProfileString(section, key,"", pReturnedString, MAX_BUFFER, iniFilePath);
+            if (bytesReturned == 0)
+            {
+                Marshal.FreeCoTaskMem(pReturnedString);
+                return "";
+            }
+            string local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned).ToString();
+            Marshal.FreeCoTaskMem(pReturnedString);
+            return local;
+        }
 
-            Native.GetPrivateProfileString(appName, key, null, sb, (uint)sb.Capacity, iniFilePath);
+        public static string[] GetSections(string iniFilePath)
+        {
+            IntPtr ptr = Marshal.StringToHGlobalAnsi(new String('\0', 1024));
+            int length = Native.GetPrivateProfileSectionNames(ptr, 1024, iniFilePath);
+            string result = "";
+            string[] returnArr = new string[0];
+            if (length > 0)
+            {
+                result = Marshal.PtrToStringAnsi(ptr, length);
+                //終端null文字を除去
+                result = result.Substring(0, result.Length - 1);
+                returnArr = result.Split('\0');
+            }
+            Marshal.FreeHGlobal(ptr);
+            return returnArr;
+        }
 
-            return sb.ToString();
+        public static string[] GetKeys(string iniFilePath, string section)
+        {
+            string[] resultArr = new string[0];
+            string resultValue = ReadIni(iniFilePath, section, null);
+            if (resultValue.Length > 0)
+            {
+                //終端null文字を除去してスプリット
+                resultArr = resultValue.Substring(0, resultValue.Length - 1).Split('\0');
+            }
+            return resultArr;
         }
 
         public static void WriteIni(string iniFilePath, string appName, string key, string value)
